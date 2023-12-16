@@ -2,6 +2,7 @@ package study.data.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import study.data.jpa.dto.PayType;
 
 @Entity
 @Getter
@@ -20,6 +21,10 @@ public class Member extends BaseEntity {
   private Long id;
   private String username;
   private int age;
+
+  @Column
+  @Enumerated(EnumType.STRING)
+  private PayType cType;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "team_id")

@@ -6,17 +6,19 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
-import study.data.jpa.dto.MemberDto;
+import study.data.jpa.dto.*;
 import study.data.jpa.entity.Member;
 import study.data.jpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -343,5 +345,73 @@ class MemberRepositoryTest {
   @Test
   public void callCustom() {
     List<Member> memberCustom = memberRepository.findMemberCustom();
+  }
+
+  @Test
+  public void enumTest() throws Exception {
+    PayType payType = PayType.valueOf("TOSS");
+    PayGroupAdvanced payGroupAdvanced = PayGroupAdvanced.findByPayType(payType);
+
+    System.out.println("payGroupAdvanced = " + payGroupAdvanced.name());
+    System.out.println("payGroupAdvanced.getTitle() = " + payGroupAdvanced.getTitle());
+  }
+
+  @Test
+  public void enumTest2() {
+
+
+    System.out.println();
+    System.out.println(Arrays.stream(FeeType.values())
+            .map(EnumMapperValue::new)
+            .collect(Collectors.toList()));
+  }
+
+  @Test
+  public void findTest() {
+
+    memberRepository.save(new Member("member1", 10));
+    memberRepository.save(new Member("member2", 10));
+    memberRepository.save(new Member("member3", 10));
+    memberRepository.save(new Member("member4", 10));
+    memberRepository.save(new Member("member5", 10));
+    memberRepository.save(new Member("member6", 10));
+    memberRepository.save(new Member("member7", 10));
+    memberRepository.save(new Member("member8", 10));
+    memberRepository.save(new Member("member9", 10));
+    memberRepository.save(new Member("member10", 10));
+    memberRepository.save(new Member("member11", 10));
+    memberRepository.save(new Member("member12", 10));
+    memberRepository.save(new Member("member13", 10));
+
+    PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+    System.out.println(memberRepository.findByAge(10, pageRequest));
+  }
+
+  @Test
+  public void queryByExample() {
+    //given
+    Team teamA = new Team(("teamA"));
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    //when
+    //Probe
+    Member member = new Member("m1");
+
+    Example<Member> example = Example.of(member);
+
+    List<Member> result = memberRepository.findAll(example);
+
+    assertThat(result.get(0).getUsername()).isEqualTo("m1");
+
+    System.out.println();
   }
 }

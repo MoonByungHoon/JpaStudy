@@ -7,6 +7,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @EnableJpaAuditing
 @SpringBootApplication
@@ -18,6 +19,6 @@ public class Application {
 
   @Bean
   public AuditorAware<String> auditorProviber() {
-    return () -> Optional.of("asdf");
+    return () -> Optional.of(UUID.randomUUID().toString());
   }
 }

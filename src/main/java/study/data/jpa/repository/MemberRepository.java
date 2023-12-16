@@ -44,7 +44,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 //    아래 처럼 쿼리를 짜면 Count 쿼리를 돌릴때에 left join까지 같이 하다보니 성능 이슈가 발생한다.
 //  @Query(value = "select m from Member m left join m.team t")
 //  쿼리가 복잡해지면 카운트 쿼리를 별도로 두어야 성능 이슈가 줄어든다.
-  @Query(value = "select m from Member m left join m.team t", countQuery = "select count (m.username) from Member m")
+//  @Query(value = "select m from Member m left join m.team t", countQuery = "select count (m.username) from Member m")
+  @Query(value = "select m from Member m left join m.team t")
   Page<Member> findByAge(int age, Pageable pageable);
 
   //  변경하게 된다는 것을 jpa에 미리 알려주지 않으면 에러가 난다. 그래서 @Modifying을 꼭 넣어주어야한다.
@@ -64,4 +65,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   List<Member> findLockByUsername(String username);
+
+//  @Override
+//  @Query(value = "select m from Member m left join m.team t", countQuery = "select count (m) from Member m where m.age >= 50")
+//  Page<Member> findAll(Pageable pageable);
 }
