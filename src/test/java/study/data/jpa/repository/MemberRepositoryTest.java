@@ -6,10 +6,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.annotation.Rollback;
 import study.data.jpa.dto.*;
 import study.data.jpa.entity.Member;
@@ -406,12 +403,61 @@ class MemberRepositoryTest {
     //Probe
     Member member = new Member("m1");
 
-    Example<Member> example = Example.of(member);
+    ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreCase("age");
+
+    Example<Member> example = Example.of(member, matcher);
 
     List<Member> result = memberRepository.findAll(example);
 
     assertThat(result.get(0).getUsername()).isEqualTo("m1");
+  }
 
-    System.out.println();
+  @Test
+  public void projections() {
+    //given
+    Team teamA = new Team(("teamA"));
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    //when
+    List<UsernameOnlyDto> result = memberRepository.findProjectionsByUsername("m1", UsernameOnlyDto.class);
+
+//    for (NestedClosedProjections nestedClosedProjections : result) {
+//      System.out.println("nestedClosedProjections = " + nestedClosedProjections);
+//    }
+  }
+
+  @Test
+  public void nativeQuery() {
+//given
+    Team teamA = new Team(("teamA"));
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    //when
+    Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(1, 10));
+
+    List<MemberProjection> content = result.getContent();
+
+    for (MemberProjection memberProjection : content) {
+      System.out.println("memberProjection = " + memberProjection.getUsername());
+      System.out.println("memberProjection.getTeamname() = " + memberProjection.getTeamname());
+
+    }
   }
 }
