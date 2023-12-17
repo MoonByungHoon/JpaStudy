@@ -455,7 +455,9 @@ class MemberRepositoryTest {
     List<MemberProjection> content = result.getContent();
 
     for (MemberProjection memberProjection : content) {
-      System.out.println("memberProjection = " + memberProjection.getUsername());
+      System.out.println("memberProjection = "
+
+              + memberProjection.getUsername());
       System.out.println("memberProjection.getTeamname() = " + memberProjection.getTeamname());
 
     }
