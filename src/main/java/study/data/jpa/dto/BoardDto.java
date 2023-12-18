@@ -20,4 +20,10 @@ public class BoardDto {
     this.username = username;
     this.age = age;
   }
+
+  public BoardDto(Long id, String content, String username) {
+    this.id = id;
+    this.content = content;
+    this.username = username;
+  }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import study.data.jpa.dto.BoardDto;
 import study.data.jpa.repository.BoardRepository;
@@ -121,5 +122,36 @@ public class BoardTest {
     }
 
     assertThat(result.size()).isEqualTo(4);
+  }
+
+  @Test
+  @DisplayName("JPA 페이징 처리 테스트")
+  public void jpaPageTypeTest() {
+    //given
+    Users users1 = new Users("User.1", 10);
+    Users users2 = new Users("User.2", 10);
+
+    em.persist(users1);
+    em.persist(users2);
+
+    for (int i = 0; i < 50; i++) {
+      boardRepository.save(new Board("Content : " + i, users1));
+    }
+
+    for (int i = 0; i < 50; i++) {
+      boardRepository.save(new Board("Content : " + i, users2));
+    }
+
+    em.flush();
+    em.clear();
+
+    PageRequest pageRequest = PageRequest.of(0, 3);
+
+    //when
+//    Page<Board> list = boardRepository.findTestAll(users1, pageRequest);
+
+    //then
+//    assertThat(list.getSize()).isEqualTo(3);
+//    assertThat(list.getTotalElements()).isEqualTo(100);
   }
 }
