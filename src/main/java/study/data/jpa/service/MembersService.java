@@ -1,12 +1,14 @@
 package study.data.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import study.data.jpa.domain.Members;
 import study.data.jpa.repository.MembersRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 public class MembersService {
 
   private final MembersRepository membersRepository;
@@ -18,9 +20,17 @@ public class MembersService {
 
   public Long join(Members members) {
 
-    validateDuplicateMember(members);
-    membersRepository.save(members);
-    return members.getId();
+    long start = System.currentTimeMillis();
+
+    try {
+      validateDuplicateMember(members);
+      membersRepository.save(members);
+      return members.getId();
+    } finally {
+      long finish = System.currentTimeMillis();
+      long timeMs = finish - start;
+      System.out.println("timeMs = " + timeMs + "ms");
+    }
   }
 
   private void validateDuplicateMember(Members members) {

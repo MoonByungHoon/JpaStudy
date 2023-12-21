@@ -50,6 +50,8 @@ class MembersServiceTest {
     //when
     membersService.join(members1);
 
+    System.out.println("가져와 : " + memberRepository.findByName(members1.getName()));
+
     IllegalStateException e = assertThrows(IllegalStateException.class, () -> membersService.join(members2));
 
     assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
