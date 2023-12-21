@@ -3,6 +3,7 @@ package study.data.jpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import study.data.jpa.aop.TimeTraceAop;
 import study.data.jpa.repository.MembersRepository;
 import study.data.jpa.service.MembersService;
 
@@ -32,6 +33,11 @@ public class SpringConfig {
   @Bean
   public MembersService membersService() {
     return new MembersService(membersRepository);
+  }
+
+  @Bean
+  public static TimeTraceAop timeTraceAop() {
+    return new TimeTraceAop();
   }
 
 //  @Bean
